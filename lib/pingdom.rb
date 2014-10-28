@@ -1,6 +1,6 @@
 require 'pingdom/processor'
 
-sort = eval($1.to_s)
+sort = eval(ARGV.shift.to_s)
 p = Processor.new(sort)
 
 raw_data = STDIN.readlines.map{|r| r.split(',').map{|e| e.strip}}

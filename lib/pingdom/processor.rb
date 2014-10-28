@@ -1,7 +1,10 @@
 
 class Processor
 
+  CHECK_ID = 0
+  START_TIME = 1
   END_TIME = 2
+
 
   def initialize sort=false
     @sort = sort
@@ -10,6 +13,7 @@ class Processor
   def process input
     out = []
     states = {}
+    input.sort!{|a,b| a[0].to_i <=> b[0].to_i}
 
     input.each do |timestamp, checkid, responsetime, status|
       previous_status, previous_record = states[checkid]
@@ -31,7 +35,13 @@ class Processor
       end
     end
 
-    out.sort!{|a,b| a[0] <=> b[0]} if @sort
+    if @sort
+      out.sort! {|a,b| 
+        s = a[CHECK_ID] <=> b[CHECK_ID]
+        s = a[START_TIME].to_i <=> b[START_TIME].to_i if s == 0
+        s
+      }
+    end
 
     out
   end

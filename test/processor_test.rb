@@ -18,6 +18,24 @@ class ProcessorTest < TestCase
       assert_equal [], @it.process(@data)
     end
 
+    should 'feeding data out of order' do
+      data = [
+        %w{14 2 irrelevant UP},
+        %w{12 2 irrelevant UP},
+        %w{10 2 irrelevant UP},
+        %w{13 2 irrelevant DOWN},
+        %w{11 2 irrelevant DOWN},
+      ]
+
+      assert_equal [
+        %w{2 10 11 UP},
+        %w{2 11 12 DOWN},
+        %w{2 12 13 UP},
+        %w{2 13 14 DOWN},
+        %w{2 14 -1 UP},
+      ], @it.process(data)
+    end
+
     context 'a single UP record' do
 
       setup do
@@ -152,6 +170,19 @@ class ProcessorTest < TestCase
                     %w{16 2048 -1 UP},
                     %w{8 4096 -1 DOWN}
                   ], @it.process(@data)
+                end
+
+                context 'sorting' do
+
+                  should 'sort' do
+                    assert_equal [
+                      %w{16 4 256 UP},
+                      %w{16 256 2048 DOWN},
+                      %w{16 2048 -1 UP},
+                      %w{8 1024 4096 UP},
+                      %w{8 4096 -1 DOWN}
+                    ], Processor.new(true).process(@data)
+                  end
                 end
               end
             end
