@@ -23,7 +23,8 @@ class Processor
           out << [checkid, timestamp, '-1', 'DOWN']
           previous_record[END_TIME] = timestamp if previous_record
         else
-          raise "Unrecognized status #{status}"
+          # bad data, skip
+          next
         end
 
         states[checkid] = [status, out.last]
